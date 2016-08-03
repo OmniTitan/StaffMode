@@ -12,12 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-
-
-/**
- * Created by shaan on 1/08/2016.
- */
-private class smodeCommand implements CommandExecutor{
+public class smodeCommand implements CommandExecutor{
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -47,7 +42,6 @@ private class smodeCommand implements CommandExecutor{
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    //Random
                     player.getInventory().clear();
                 } else if(isStaffMode) {
                     try {
