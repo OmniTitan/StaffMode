@@ -23,6 +23,7 @@ public class smodeCommand implements CommandExecutor{
                 File f = new File(Main.getPlugin.getDataFolder().getAbsolutePath()+ "/inventories", player.getName() + ".yml");
                 FileConfiguration c = YamlConfiguration.loadConfiguration(f);
 
+                // Get Staff Mode from config, check if null.
                 boolean isStaffMode;
                 if(c.get("StaffMode") == null){
                     isStaffMode = false;
@@ -33,22 +34,15 @@ public class smodeCommand implements CommandExecutor{
                 }
 
 
-
                 if (!isStaffMode) {
                     try {
-                        c.set("StaffMode", true);
-                        c.save(f); // Must have this save before calling saveInventory....why?
-                        saveInventory(player, f);
+                        playToStaff(player, f, c);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    player.getInventory().clear();
                 } else if(isStaffMode) {
                     try {
-                        player.sendMessage("This is running");
-                        restoreInventory(player, f);
-                        c.set("StaffMode", false);
-                        c.save(f);
+                        staffToPlay(player, f, c);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -62,6 +56,23 @@ public class smodeCommand implements CommandExecutor{
         } else {
             return false;
         }
+    }
+
+    private void staffToPlay(Player p, File f, FileConfiguration c) throws IOException {
+        // Set Staff Mode to False and Save file
+        restoreInventory(p, f);
+        c.set("StaffMode", false);
+        c.save(f);
+    }
+
+    private void playToStaff(Player p, File f, FileConfiguration c) throws IOException {
+        // Set Staff Mode to true
+        c.set("StaffMode", true);
+        c.save(f); // Must have this save before calling saveInventory....why?
+        saveInventory(p, f);
+
+        p.getInventory().clear();
+
     }
 
     private void saveInventory(Player p, File f) throws IOException {
