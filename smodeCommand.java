@@ -47,6 +47,7 @@ private class smodeCommand implements CommandExecutor{
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    //Random
                     player.getInventory().clear();
                 } else if(isStaffMode) {
                     try {
