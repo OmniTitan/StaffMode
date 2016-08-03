@@ -60,34 +60,35 @@ public class smodeCommand implements CommandExecutor{
 
     private void staffToPlay(Player p, File f, FileConfiguration c) throws IOException {
         // Set Staff Mode to False and Save file
-        restoreInventory(p, f);
         c.set("StaffMode", false);
         c.save(f);
+        saveInventory(p, f, "staff");
+        restoreInventory(p, f, "play");
+
     }
 
     private void playToStaff(Player p, File f, FileConfiguration c) throws IOException {
         // Set Staff Mode to true
         c.set("StaffMode", true);
         c.save(f); // Must have this save before calling saveInventory....why?
-        saveInventory(p, f);
-
-        p.getInventory().clear();
+        saveInventory(p, f, "play");
+        restoreInventory(p, f, "staff");
 
     }
 
-    private void saveInventory(Player p, File f) throws IOException {
+    private void saveInventory(Player p, File f, String ID) throws IOException {
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
-        c.set("inventory.armor", p.getInventory().getArmorContents());
-        c.set("inventory.content", p.getInventory().getContents());
+        c.set("inventory.armor."+ID, p.getInventory().getArmorContents());
+        c.set("inventory.content."+ID, p.getInventory().getContents());
         c.save(f);
     }
 
     @SuppressWarnings("unchecked")
-    private void restoreInventory(Player p, File f) throws IOException {
+    private void restoreInventory(Player p, File f, String ID) throws IOException {
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
-        ItemStack[] content = ((List<ItemStack>) c.get("inventory.armor")).toArray(new ItemStack[0]);
+        ItemStack[] content = ((List<ItemStack>) c.get("inventory.armor."+ID)).toArray(new ItemStack[0]);
         p.getInventory().setArmorContents(content);
-        content = ((List<ItemStack>) c.get("inventory.content")).toArray(new ItemStack[0]);
+        content = ((List<ItemStack>) c.get("inventory.content."+ID)).toArray(new ItemStack[0]);
         p.getInventory().setContents(content);
     }
 }
