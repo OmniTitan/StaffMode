@@ -16,7 +16,7 @@ public class smodeCommand implements CommandExecutor{
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (sender instanceof Player && label.equals("smode")) {
+        if (sender instanceof Player) {
             Player player = (Player) sender;
             if(player.hasPermission("staffmode.smode.inventory")) {
 
@@ -27,20 +27,18 @@ public class smodeCommand implements CommandExecutor{
                 boolean isStaffMode;
                 if(c.get("StaffMode") == null){
                     isStaffMode = false;
-                    player.sendMessage("Still null");
                 } else {
                     isStaffMode = (boolean) c.get("StaffMode");
-                    player.sendMessage(String.valueOf(isStaffMode));
                 }
 
-
-                if (!isStaffMode) {
+                //
+                if (!isStaffMode) { //If StaffMode False - Save Play and Load Staff
                     try {
                         playToStaff(player, f, c);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } else if(isStaffMode) {
+                } else if(isStaffMode) { //If StaffMode True - Save Staff and Load Play
                     try {
                         staffToPlay(player, f, c);
                     } catch (IOException e) {
@@ -57,6 +55,7 @@ public class smodeCommand implements CommandExecutor{
             return false;
         }
     }
+
 
     private void staffToPlay(Player p, File f, FileConfiguration c) throws IOException {
         // Set Staff Mode to False and Save file
@@ -80,15 +79,18 @@ public class smodeCommand implements CommandExecutor{
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
         c.set("inventory.armor."+ID, p.getInventory().getArmorContents());
         c.set("inventory.content."+ID, p.getInventory().getContents());
+        p.sendMessage("Inv Saved");
         c.save(f);
     }
 
     @SuppressWarnings("unchecked")
     private void restoreInventory(Player p, File f, String ID) throws IOException {
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
-        ItemStack[] content = ((List<ItemStack>) c.get("inventory.armor."+ID)).toArray(new ItemStack[0]);
-        p.getInventory().setArmorContents(content);
-        content = ((List<ItemStack>) c.get("inventory.content."+ID)).toArray(new ItemStack[0]);
-        p.getInventory().setContents(content);
+        if(c.get("inventory.armor."+ID) != null) {
+            ItemStack[] content = ((List<ItemStack>) c.get("inventory.armor." + ID)).toArray(new ItemStack[0]);
+            p.getInventory().setArmorContents(content);
+            content = ((List<ItemStack>) c.get("inventory.content." + ID)).toArray(new ItemStack[0]);
+            p.getInventory().setContents(content);
+        }
     }
 }
